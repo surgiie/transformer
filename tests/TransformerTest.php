@@ -1,18 +1,18 @@
 <?php
 
 use Carbon\Carbon;
-use Surgiie\Transformer\Transformer;
-use Surgiie\Transformer\Exceptions\NotCallableException;
 use Surgiie\Transformer\Exceptions\ExecutionNotAllowedException;
+use Surgiie\Transformer\Exceptions\NotCallableException;
+use Surgiie\Transformer\Transformer;
 
-beforeEach(function(){
+beforeEach(function () {
     Transformer::unguard();
     $this->data = [
         'first_name' => '    jim    ',
         'last_name' => '   thompson',
-        'date_of_birth' => "2020-05-24",
+        'date_of_birth' => '2020-05-24',
         'password' => 'abcdefgh12345',
-        'favorite_number' => "24",
+        'favorite_number' => '24',
         'favorite_date' => null,
         'get_notifications' => true,
         'contact_info' => [
@@ -21,7 +21,7 @@ beforeEach(function(){
             'cell_phone' => '1234567890',
             'apartment_number' => '12',
             'email' => 'email@example.com',
-        ]
+        ],
     ];
 });
 
@@ -77,33 +77,28 @@ it('can use class constants', function () {
     expect($formatter->transform())->toBeInstanceOf(Carbon::class);
 });
 
-
-
 it('can delegate to underlying value instances', function () {
     $formatter = (new Transformer('   2020-05-24  ', [
         'trim',
         Carbon::class,
         '->addDays:1',
-        '->format:m/d/Y'
+        '->format:m/d/Y',
     ]));
 
     expect($formatter->transform())->toBe('05/25/2020');
 });
 
-
 it('throws exception when guarded', function () {
-    expect(function(){
-
-        Transformer::guard(function($method){
+    expect(function () {
+        Transformer::guard(function ($method) {
             return in_array($method, ['trim']);
         });
 
         $formatter = (new Transformer('   uncle bob  ', [
             'trim',
-            'ucwords'
+            'ucwords',
         ]));
 
         $formatter->transform();
-
-    })->toThrow(ExecutionNotAllowedException::class, "Function ucwords is not allowed to be called.");
+    })->toThrow(ExecutionNotAllowedException::class, 'Function ucwords is not allowed to be called.');
 });

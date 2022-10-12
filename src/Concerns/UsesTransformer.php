@@ -12,16 +12,19 @@ trait UsesTransformer
     {
         return new Transformer($value, $transformers, $name);
     }
+
     /**Return a new transformer instance.*/
     public function dataTransformer(array $data = [], array $functions = []): DataTransformer
     {
         return new DataTransformer($data, $functions);
     }
+
     /**Transform the given value.*/
-    public function transform($value = "", array $functions = [], string|null $name = null)
+    public function transform($value = '', array $functions = [], string|null $name = null)
     {
         return $this->transformer($value, $functions, $name)->transform();
     }
+
     /**Transform the given data.*/
     public function transformData(array $data = [], array $functions = []): array
     {

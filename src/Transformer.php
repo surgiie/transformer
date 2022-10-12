@@ -59,7 +59,7 @@ class Transformer
             return $value->{$function}(...$args);
         }
 
-        if(is_string($function) && class_exists($function)){
+        if (is_string($function) && class_exists($function)) {
             return new $function($value);
         }
         //check if its a custom formattable class
@@ -139,6 +139,7 @@ class Transformer
         if (! is_string($method)) {
             return false;
         }
+
         return str_starts_with(trim($method), '->');
     }
 
@@ -167,7 +168,6 @@ class Transformer
         if (is_string($functions)) {
             $functions = explode('|', $functions);
         }
-
 
         $this->functions = $functions;
 
