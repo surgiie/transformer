@@ -1,19 +1,19 @@
 <?php
 
 use Carbon\Carbon;
-use Surgiie\Transformer\Transformer;
-use Surgiie\Transformer\DataTransformer;
 use Surgiie\Transformer\Contracts\Transformable;
+use Surgiie\Transformer\DataTransformer;
 use Surgiie\Transformer\Exceptions\NotCallableException;
+use Surgiie\Transformer\Transformer;
 
 beforeEach(function () {
     Transformer::unguard();
     $this->data = [
         'first_name' => '    jim    ',
         'last_name' => '   thompson',
-        'date_of_birth' => "2020-05-24",
+        'date_of_birth' => '2020-05-24',
         'password' => 'abcdefgh12345',
-        'favorite_number' => "24",
+        'favorite_number' => '24',
         'favorite_date' => null,
         'get_notifications' => true,
         'contact_info' => [
@@ -22,7 +22,7 @@ beforeEach(function () {
             'cell_phone' => '1234567890',
             'apartment_number' => '12',
             'email' => 'email@example.com',
-        ]
+        ],
     ];
 });
 
@@ -35,15 +35,14 @@ it('calls functions on data', function () {
     // otherwise calls functions.
     $transformer = (new DataTransformer($this->data, [
         'first_name' => 'trim|ucfirst',
-        'favorite_number' => 'intval'
+        'favorite_number' => 'intval',
     ]));
 
     $transformedData = $transformer->transform();
-    expect($transformedData['first_name'])->toBe("Jim");
+    expect($transformedData['first_name'])->toBe('Jim');
     expect($transformedData['favorite_number'])->toBe(24);
-    expect($transformedData['first_name'])->not->toBe($this->data["first_name"]);
+    expect($transformedData['first_name'])->not->toBe($this->data['first_name']);
 });
-
 
 it('can use class constants', function () {
     $formatter = (new DataTransformer($this->data, ['date_of_birth' => [
@@ -55,8 +54,6 @@ it('can use class constants', function () {
     expect($data['date_of_birth'])->toBeInstanceOf(Carbon::class);
 });
 
-
-
 it('throws exception when non callable is called', function () {
     expect(function () {
         $transformer = (new DataTransformer($this->data, ['first_name' => 'im_not_a_callable_function']));
@@ -66,49 +63,49 @@ it('throws exception when non callable is called', function () {
 
 it('can specify value order', function () {
     $formatter = (new DataTransformer($this->data, [
-        'password' => 'trim|preg_replace:/[^0-9]/,,:value:'
+        'password' => 'trim|preg_replace:/[^0-9]/,,:value:',
     ]));
 
     $formattedData = $formatter->transform();
-    expect($formattedData['password'])->toBe("12345");
+    expect($formattedData['password'])->toBe('12345');
     expect($formattedData['password'])->not->toBe($this->data['password']);
 });
 
-it("can process callbacks", function () {
+it('can process callbacks', function () {
     $formatter = (new DataTransformer($this->data, [
-        "get_notifications" => function () {
-            return "Never";
-        }
+        'get_notifications' => function () {
+            return 'Never';
+        },
     ]));
 
     $formattedData = $formatter->transform();
 
-    expect($formattedData['get_notifications'])->toBe("Never");
+    expect($formattedData['get_notifications'])->toBe('Never');
 
     expect($formattedData['get_notifications'])->not->toBe($this->data['get_notifications']);
 });
 
-it("can process tranformable objects", function () {
+it('can process tranformable objects', function () {
     $formatter = (new DataTransformer($this->data, [
-        "get_notifications" => new class() implements Transformable
+        'get_notifications' => new class() implements Transformable
         {
             public function transform($value, Closure $exit)
             {
-                return "Yes";
+                return 'Yes';
             }
-        }
+        },
     ]));
 
     $formattedData = $formatter->transform();
 
-    expect($formattedData['get_notifications'])->toBe("Yes");
+    expect($formattedData['get_notifications'])->toBe('Yes');
 
     expect($formattedData['get_notifications'])->not->toBe($this->data['get_notifications']);
 });
 
-it("can exits on blank input using ?", function () {
+it('can exits on blank input using ?', function () {
     $formatter = (new DataTransformer($this->data, [
-        'favorite_date' => '?|Carbon\Carbon|.format:m/d/Y'
+        'favorite_date' => '?|Carbon\Carbon|.format:m/d/Y',
     ]));
 
     $formattedData = $formatter->transform();
@@ -117,21 +114,21 @@ it("can exits on blank input using ?", function () {
     expect($formattedData['favorite_date'])->not->toBe((new Carbon())->format('m/d/Y'));
 
     //assert at any position in the list of functions
-    $this->data['favorite_date'] = "2022-05-24";
+    $this->data['favorite_date'] = '2022-05-24';
     $formatter = (new DataTransformer($this->data, [
         'favorite_date' => ['Carbon\Carbon', function () {
             return null;
-        }, '?', '.format:m/d/Y']
+        }, '?', '.format:m/d/Y'],
     ]));
 
     $formattedData = $formatter->transform();
     expect($formattedData['favorite_date'])->toBeNull();
-    expect($formattedData['favorite_date'])->not->toBe("05/24/2022");
+    expect($formattedData['favorite_date'])->not->toBe('05/24/2022');
 });
 
-it("can delegate to underlying objects", function () {
+it('can delegate to underlying objects', function () {
     $formatter = (new DataTransformer($this->data, [
-        'date_of_birth' => 'trim|Carbon\Carbon|->addDays:1|->format:m/d/Y'
+        'date_of_birth' => 'trim|Carbon\Carbon|->addDays:1|->format:m/d/Y',
     ]));
 
     $formattedData = $formatter->transform();
