@@ -58,7 +58,7 @@ Notice that the syntax is very similiar to the [laravel validation](https://lara
 Again, this is because this package is powered by the same components, so when writing code that is combined with validation, the syntax and code is consistent and fluent.
 
 ### Passing Arguments/Specifying Value Argument Order
-Aguments can be specified to your functions using a `<function>:<comma-delimited-list>` syntax. An example:
+Arguments can be specified to your functions using a `<function>:<comma-delimited-list>` syntax. An example:
 
 ```php
 
