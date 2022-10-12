@@ -1,5 +1,6 @@
 # transformer
 
+![Tests](https://github.com/surgiie/transformer/actions/workflows/tests.yml/badge.svg)
 
 ## Introduction
 
