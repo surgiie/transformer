@@ -6,6 +6,9 @@
 
 `transformer` is a php package for transforming values or input. Powered by the [Laravel](https://laravel.com) framework's validation components.
 
+## Install
+
+`composer require surgiie/transformer`
 
 ## Use
 
