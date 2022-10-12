@@ -1,0 +1,11 @@
+/phpunit.xml export-ignore
+/tests export-ignore
+/.styleci.yml export-ignore
+/.github export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.php_cs.dist.php export-ignore
+/phpunit.xml.dist export-ignore
+/.scrutinizer.yml export-ignore
+/.styleci.yml export-ignore
+/tests export-ignore

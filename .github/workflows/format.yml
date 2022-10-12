@@ -1,0 +1,25 @@
+name: Format
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "master"
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 2
+    - name: "Install composer dependencies"
+      run: composer install
+    - name: "Format files with laravel pint."
+      run: ./vendor/bin/pint
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+          commit_message: Apply formatting changes
+          branch: ${{ github.head_ref }}

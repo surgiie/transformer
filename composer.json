@@ -1,0 +1,38 @@
+{
+    "name": "surgiie/transformer",
+    "description": "A data transforming/formatting package for php.",
+    "license": "MIT",
+    "type": "library",
+    "keywords": ["php", "formatting", "input formatting", "sanitize", "sanitize input"],
+    "authors": [
+        { "name": "Sergio Compean", "email": "scompean24@gmail.com" }
+    ],
+    "require": {
+        "php" : "^8.0.2",
+        "illuminate/support": "^9.0",
+        "illuminate/validation": "^9.0"
+    },
+    "require-dev": {
+        "pestphp/pest": "^1.22",
+        "laravel/pint": "^1.0",
+        "symfony/var-dumper": "^6.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Surgiie\\Transformer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "./vendor/bin/pest tests -c phpunit.dist.xml"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
