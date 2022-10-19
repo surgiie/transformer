@@ -136,7 +136,7 @@ class TransformValue implements Transformable
         }
 
         // or change the $value
-        $value = "Changed"
+        $value = "Changed";
 
         return $value;
     }
@@ -145,7 +145,7 @@ class TransformValue implements Transformable
 $input = ['first_name'=>' Bob'];
 $transformers = [
     'first_name'=>['trim', new TransformValue],
-]
+];
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
@@ -211,7 +211,8 @@ In our first example above, we used an example of passing a value that creates [
 
 It is possible to delegate a function call to the value if it has been converted to instance. Using a `-><methodName>` convention you can specify method chaining on that instance:
 
-```
+```php
+
 <?php
 
 use Closure;
