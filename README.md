@@ -8,7 +8,9 @@
 
 ## Install
 
-`composer require surgiie/transformer`
+```bash
+composer require surgiie/transformer
+```
 
 ## Use
 
