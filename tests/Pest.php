@@ -1,6 +1,6 @@
 <?php
 
-use Tests\TestCase;
+use Surgiie\Transformer\Tests\TestCase;
 
 /*
 |--------------------------------------------------------------------------

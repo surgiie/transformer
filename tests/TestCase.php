@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Surgiie\Transformer\Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
