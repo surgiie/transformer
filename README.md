@@ -355,6 +355,18 @@ public function store(Request $request)
 
 If calling on a `FormRequest` object, it will use the `validated()` function to retrieve the input data.
 
+If you don't want to include the macro, you can ignore package discovery for the service provider by including the following in your `composer.json`.
+
+```
+"extra": {
+    "laravel": {
+        "dont-discover": [
+            "surgiie/transformer"
+        ]
+    }
+},
+```
+
 ## Contribute
 
 Contributions are always welcome in the following manner:
