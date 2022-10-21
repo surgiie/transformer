@@ -4,13 +4,13 @@ on:
   push:
     branches: [master]
     paths:
-      - "src/**"
-      - "tests/**"
+      - "src/*"
+      - "tests/*"
   pull_request:
     branches: [master]
     paths:
-      - "src/**"
-      - "tests/**"
+      - "src/*"
+      - "tests/*"
 jobs:
   build:
     runs-on: ubuntu-latest
