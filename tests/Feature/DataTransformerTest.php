@@ -17,10 +17,10 @@ beforeEach(function () {
         'favorite_date' => null,
         'get_notifications' => true,
         'contact_info' => [
-            'address_one' => '123 some lane street',
-            'home_phone' => '1234567890',
-            'cell_phone' => '1234567890',
-            'apartment_number' => '12',
+            'address' => '123 some lane street',
+            'home_phone' => '123-456-7890',
+            'cell_phone' => '123-456-7890',
+            'apartment_number' => '12B',
             'email' => 'email@example.com',
         ],
     ];
@@ -135,4 +135,48 @@ it('can delegate to underlying objects', function () {
 
     expect($formattedData['date_of_birth'])->not->toBe($this->data['date_of_birth']);
     expect($formattedData['date_of_birth'])->toBe('05/25/2020');
+});
+
+it('can process wildcards on data', function () {
+    $transformer = (new DataTransformer($this->data, [
+        '*name*' => 'trim|ucfirst',
+    ]));
+
+    $transformedData = $transformer->transform();
+    expect($transformedData['first_name'])->toBe('Jim');
+    expect($transformedData['last_name'])->toBe('Thompson');
+});
+
+it('can process nested arrays with dot notation', function () {
+    $formatter = (new DataTransformer($this->data, [
+        'contact_info.address' => [\Illuminate\Support\Stringable::class, '->after:123 ', '->toString'],
+        'contact_info.home_phone' => 'preg_replace:/[^0-9]/,,:value:',
+        'contact_info.cell_phone' => 'preg_replace:/[^0-9]/,,:value:',
+        'contact_info.apartment_number' => 'str_replace:B,A,:value:',
+        'contact_info.email' => 'str_replace:example,gmail,:value:',
+
+    ]));
+
+    $formattedData = $formatter->transform();
+
+    expect($formattedData['contact_info'])->toBe(
+        [
+            'address' => 'some lane street',
+            'home_phone' => '1234567890',
+            'cell_phone' => '1234567890',
+            'apartment_number' => '12A',
+            'email' => 'email@gmail.com',
+        ]
+    );
+});
+
+it('can process wildcards on nested arrays', function () {
+    $formatter = (new DataTransformer($this->data, [
+        'contact_info.*phone*' => 'preg_replace:/[^0-9]/,,:value:',
+    ]));
+
+    $formattedData = $formatter->transform();
+
+    expect($formattedData['contact_info']['home_phone'])->toBe('1234567890');
+    expect($formattedData['contact_info']['cell_phone'])->toBe('1234567890');
 });
