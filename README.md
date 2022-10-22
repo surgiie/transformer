@@ -144,9 +144,9 @@ class TransformValue implements Transformable
     }
 }
 
-$input = ['first_name'=>' Bob'];
+$input = ['first_name' => ' Bob'];
 $transformers = [
-    'first_name'=>['trim', new TransformValue],
+    'first_name' => ['trim', new TransformValue],
 ];
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
@@ -328,6 +328,43 @@ class ExampleController extends Controller
     }
 }
 
+```
+
+### Use the Request macro
+
+You can also utilize a macro on a `Illuminate\Http\Request` object instance by calling the `transform()` function on the request itself, returning the resulting transform.
+
+```php
+public function store(Request $request)
+{
+    // Using the data that is in the request object (i.e. `$request->all()`)
+    $transformedData = $request->transform([
+        'first_name' => ['strtoupper'],
+    ]);
+
+    // $transformedData['first_name'] will be all uppercase
+    // all other data will be included from the request
+    
+    // You can also customize the input that is transformed,
+    // in this case $transformedData will only have the `first_name` key.
+    $transformedData = $request->transform($request->only(['first_name'], [
+        'first_name' => ['strtoupper'],
+    ]);
+}
+```
+
+If calling on a `FormRequest` object, it will use the `validated()` function to retrieve the input data.
+
+If you don't want to include the macro, you can ignore package discovery for the service provider by including the following in your `composer.json`.
+
+```
+"extra": {
+    "laravel": {
+        "dont-discover": [
+            "surgiie/transformer"
+        ]
+    }
+},
 ```
 
 ## Contribute
