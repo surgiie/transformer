@@ -1,11 +1,6 @@
 <?php
 
-use Carbon\Carbon;
-use Surgiie\Transformer\Contracts\Transformable;
-use Surgiie\Transformer\DataTransformer;
-use Surgiie\Transformer\Exceptions\NotCallableException;
 use Surgiie\Transformer\Transformer;
-use function PHPUnit\Framework\greaterThan;
 
 beforeEach(function () {
     Transformer::unguard();
@@ -71,11 +66,11 @@ it('can process callbacks', function () {
 
     expect($formattedData['get_notifications'])->toBe('Never')
         ->and($formattedData['get_notifications'])->not->toBe($this->data['get_notifications']);
-
 });
 
 it('can use inline function and delegate', function () {
-    function to_carbon($value) {
+    function to_carbon($value)
+    {
         return new \Carbon\Carbon($value);
     }
     $formattedData = $this->request->transform([

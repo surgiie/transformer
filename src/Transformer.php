@@ -29,7 +29,7 @@ class Transformer
     protected static ?Closure $guardWith = null;
 
     /**
-     * Construct a new s instance.
+     * Construct a new Transformer instance.
      */
     public function __construct($value = '', array|string $functions = [], string $name = null)
     {
@@ -50,10 +50,10 @@ class Transformer
         $function = $this->prepareTransformerFunction($method);
 
         // check if the transformer method should be delegated to on an
-        // underlying object this is done using a ".<method>" convention.
+        // underlying object this is done using a "-><method>" convention.
         // this allows for transforming to be delegated to 3rd party classes such
-        // as carbon. e.g to_carbon|.format:m/d/Y
-        if (is_object($value) && $this->shouldDelegateTransformer($function)) {
+        // as carbon. e.g to_carbon|->format:m/d/Y
+        if ($this->shouldDelegateTransformer($value, $function)) {
             $function = ltrim($function, '->');
 
             return $value->{$function}(...$args);
@@ -62,14 +62,14 @@ class Transformer
         if (is_string($function) && class_exists($function)) {
             return new $function($value);
         }
-        //check if its a custom formattable class
+        //check if its a custom transformable class
         if ($function instanceof Transformable) {
             return $function->transform($value, $this->abortTransormationCallback());
         // or a callback
         } elseif ($function instanceof Closure) {
             return $function($value, $this->abortTransormationCallback());
         }
-        //otherwise check if the method is function and whitelisted.
+        //otherwise check if the method is function is even callable/not guarded
         elseif (! is_callable($function)) {
             throw new NotCallableException(
                 "Function $function not callable.",
@@ -130,17 +130,15 @@ class Transformer
     }
 
     /**
-     * Check if the transformer method starts with a ->, i.e "-><method>" format.
-     * This signifies that we want to deletage/method chain to the set value which
-     * can be a either 3rd party package or a developer custom class instance.
+     * Check if the transformer method should be delegated to the und
      */
-    protected function shouldDelegateTransformer($method): bool
+    protected function shouldDelegateTransformer($value, $method): bool
     {
         if (! is_string($method)) {
             return false;
         }
 
-        return str_starts_with(trim($method), '->');
+        return is_object($value) && str_starts_with(trim($method), '->');
     }
 
     /**
@@ -191,10 +189,10 @@ class Transformer
      */
     protected function prepareArguments($value, $function, array $args = [])
     {
-        //delegated function calls do not get the value passed in by default
-        //since the set value is the transformer function itself,
+        // delegated function calls do not get the value passed in by default
+        // since the set value is the transformer function itself,
         // the value parameter is is not needed as a param.
-        if (is_object($value) && $this->shouldDelegateTransformer($function)) {
+        if ($this->shouldDelegateTransformer($value, $function)) {
             $defaults = [];
         } else {
             $defaults = [$value];

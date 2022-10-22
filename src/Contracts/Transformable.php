@@ -7,7 +7,7 @@ use Closure;
 interface Transformable
 {
     /**
-     * Transform the given value.
+     * Transform the given value or exit.
      */
     public function transform($value, Closure $exit);
 }

@@ -4,8 +4,8 @@ on:
     branches:
       - "master"
     paths:
-      - "src/*"
-      - "tests/*"
+      - "src/**"
+      - "tests/**"
 jobs:
   format:
     runs-on: ubuntu-latest

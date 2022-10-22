@@ -344,27 +344,29 @@ public function store(Request $request)
 
     // $transformedData['first_name'] will be all uppercase
     // all other data will be included from the request
-    
+
     // You can also customize the input that is transformed,
     // in this case $transformedData will only have the `first_name` key.
-    $transformedData = $request->transform($request->only(['first_name'], [
+    $transformedData = $request->transform($request->only(['first_name']), [
         'first_name' => ['strtoupper'],
     ]);
 }
 ```
 
-If calling on a `FormRequest` object, it will use the `validated()` function to retrieve the input data.
+If calling on a `FormRequest` object, it will use the `validated()` function to retrieve the input data. Note that this does require the data you are targeting to be defined as a validation rule in your form request's `rules` function, otherwise the data will be omitted from transformation.
 
-If you don't want to include the macro, you can ignore package discovery for the service provider by including the following in your `composer.json`.
+#### Package Discovery/Dont Discover
 
-```
+Laravel by default will automatically register the package service provider, but if you don't want to include the macro, you can ignore package discovery for the service provider by including the following in your `composer.json`.
+
+```json
 "extra": {
     "laravel": {
         "dont-discover": [
             "surgiie/transformer"
         ]
     }
-},
+}
 ```
 
 ## Contribute
