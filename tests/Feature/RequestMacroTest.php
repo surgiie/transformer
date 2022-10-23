@@ -18,10 +18,10 @@ beforeEach(function () {
         'favorite_date' => null,
         'get_notifications' => true,
         'contact_info' => [
-            'address_one' => '123 some lane street',
+            'address' => '123 some lane street',
             'home_phone' => '1234567890',
             'cell_phone' => '1234567890',
-            'apartment_number' => '12',
+            'apartment' => '12A',
             'email' => 'email@example.com',
         ],
     ];
@@ -88,4 +88,33 @@ it('can use the validated data from form requests', function () {
 
     expect(count($transformedData))->toBe(1)
         ->and($transformedData['first_name'])->toBe('Jim');
+});
+
+it('can process nested arrays with dot notation', function () {
+    $transformedData = $this->request->transform([
+        'contact_info.address' => [\Illuminate\Support\Stringable::class, '->after:123 ', '->toString'],
+        'contact_info.home_phone' => 'preg_replace:/[^0-9]/,,:value:',
+        'contact_info.cell_phone' => 'preg_replace:/[^0-9]/,,:value:',
+        'contact_info.apartment' => 'str_replace:B,A,:value:',
+        'contact_info.email' => 'str_replace:example,gmail,:value:',
+    ]);
+
+    expect($transformedData['contact_info'])->toBe(
+        [
+            'address' => 'some lane street',
+            'home_phone' => '1234567890',
+            'cell_phone' => '1234567890',
+            'apartment' => '12A',
+            'email' => 'email@gmail.com',
+        ]
+    );
+});
+
+it('can process wildcards on nested arrays', function () {
+    $formattedData = $this->request->transform([
+        'contact_info.*phone*' => 'preg_replace:/[^0-9]/,,:value:',
+    ]);
+
+    expect($formattedData['contact_info']['home_phone'])->toBe('1234567890');
+    expect($formattedData['contact_info']['cell_phone'])->toBe('1234567890');
 });
