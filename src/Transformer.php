@@ -64,10 +64,10 @@ class Transformer
         }
         //check if its a custom transformable class
         if ($function instanceof Transformable) {
-            return $function->transform($value, $this->abortTransormationCallback());
+            return $function->transform($value, $this->abortTransformationCallback());
         // or a callback
         } elseif ($function instanceof Closure) {
-            return $function($value, $this->abortTransormationCallback());
+            return $function($value, $this->abortTransformationCallback());
         }
         //otherwise check if the method is function is even callable/not guarded
         elseif (! is_callable($function)) {
@@ -145,7 +145,7 @@ class Transformer
      * Return a callback for passing closures/transformable classes
      * that throws an exception for aborting processing of tranformers.
      */
-    protected function abortTransormationCallback(): Closure
+    protected function abortTransformationCallback(): Closure
     {
         return function () {
             throw new AbortedTransformationException();
@@ -219,8 +219,7 @@ class Transformer
         foreach ($this->functions as $function) {
             [$rule, $parameters] = TransformerRuleParser::parse($function);
 
-            //if rule is ? then check if
-            //the value is blank break out if so.
+            // if rule is ? then check if the value is blank break out if it is.
             if ($rule == '?') {
                 if (blank($this->value)) {
                     break;
@@ -231,7 +230,7 @@ class Transformer
 
             try {
                 $this->value = $this->call($rule, $this->value, $parameters);
-            } catch (AbortedTransformationException $e) {
+            } catch (AbortedTransformationException) {
                 break;
             }
         }
