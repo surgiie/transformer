@@ -87,7 +87,7 @@ $transformer->transform();
 
 ```
 ### Optional Transformation/Blank Input
-Sometimes you may only want to transform a value if the value isnt null or "blank": You can specify `?` anywhere in the chain of functions to specify if the we should break out of processing functions, often this should be defined in front of all your functions:
+Sometimes you may only want to transform a value if the value isnt null or "blank". You can specify a `?` anywhere in the chain of functions to specify if we should break out of processing functions when the input is blank. Often times, this should be defined in front of all your functions:
 
 ```php
 $input = ['first_name'=>null];
@@ -209,7 +209,7 @@ $transformer->transform();
 
 ### Object Values/Method Delegation
 
-In our first example above, we used an example of passing a value that creates [Carbon](https://carbon.nesbot.com/docs/) instance then calls the `format` method on that instance.
+In our first example above, we used an example of passing a value that creates a [Carbon](https://carbon.nesbot.com/docs/) instance then calls the `format` method on that instance.
 
 It is possible to delegate a function call to the value if it has been converted to instance. Using a `-><methodName>` convention you can specify method chaining on that instance:
 
@@ -303,7 +303,7 @@ $transformer->transform(); // returns "Uncle Bob"
 
 ### Use Traits
 
-If you want to transform data and values on the fly quickly in your classes, you can utilize the `\Surgiie\Transformer\Concerns\UsesTransformer` concerns.
+If you want to transform data and values on the fly quickly in your classes, you can utilize the `\Surgiie\Transformer\Concerns\UsesTransformer` trait:
 
 ```php
 <?php
@@ -319,11 +319,11 @@ class ExampleController extends Controller
     public function store(Request $request)
     {
         //...
-        // single one off value
 
+        // transform a single value
         $newValue = $this->transform(" example  ", ['trim|ucwords'])
-
-        $newData = $this->transformData($request->validated(), ["example"=>'trim|ucwords']);
+        // or transform an array of data
+        $newData = $this->transformData(['example'=> 'datat    '], ["example"=>'trim|ucwords']);
 
     }
 }
@@ -353,7 +353,7 @@ public function store(Request $request)
 }
 ```
 
-If calling on a `FormRequest` object, it will use the `validated()` function to retrieve the input data. Note that this does require the data you are targeting to be defined as a validation rule in your form request's `rules` function, otherwise the data will be omitted from transformation.
+If calling on a `FormRequest` object, it will use the `validated()` function to retrieve the input data. **Note** that this does require the data you are targeting to be defined as a validation rule in your form request's `rules` function, otherwise the data will be omitted from transformation.
 
 #### Package Discovery/Dont Discover
 
