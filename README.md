@@ -21,7 +21,7 @@ The most basic use is simple, just pass your data and array of callable function
 <?php
 
 use Closure;
-
+use Illuminate\Support\Stringable;
 // example available functions at runtime:
 function to_carbon($value)
 {
@@ -36,6 +36,7 @@ function only_numbers($value)
 $input = [
   'first_name'=>'    jim    ',
   'last_name'=>'   thompson',
+  'address'  => '123 some street'
   'phone_number'=>'123-456-7890',
   'date_of_birth'=>"1991-05-01",
 ];
@@ -44,7 +45,9 @@ $transformers = [
     'first_name'=>'trim|ucfirst',
     'last_name'=>'trim|ucfirst',
     'phone_number'=>'only_numbers',
-    'date_of_birth'=>'to_carbon|->format:m/d/y', // more on "object values and method chaining below:"
+    // more on "object values and method delegation below:"
+    'address' => [Stringable::class, '->after:123 ', '->toString'],
+    'date_of_birth'=>'to_carbon|->format:m/d/y',
 ];
 
 $transformer = new DataTransformer($input, $transformers);
@@ -60,11 +63,11 @@ $newData = $transformer->transform();
 
 ```
 
-Notice that the syntax is very similiar to the [laravel validation](https://laravel.com/docs/9.x/validation) syntax.
-Again, this is because this package is powered by the same components, so when writing code that is combined with validation, the syntax and code is consistent and fluent.
+Notice that the syntax is very similiar to the [laravel validation](https://laravel.com/docs/9.x/validation) syntax. Again, this is because this package is powered by the same components.
 
 ### Passing Arguments/Specifying Value Argument Order
-Arguments can be specified to your functions using a `<function>:<comma-delimited-list>` syntax. An example:
+
+Just like Laravel validation, arguments can be specified to your functions using a `<function>:<comma-delimited-list>` syntax:
 
 ```php
 
@@ -72,6 +75,7 @@ $transformers = [
     'example'=>'your_function:arg1,arg2',
 ];
 ```
+
 By default, your function will be passed the value being formatted as the first argument then will pass the arguments in the order you specify them. However, if your function does not
 accept the value as the first argument, you may use the `:value:` placeholder to specify order. For example, `preg_replace` accepts the value to change as the 3rd argument:
 
@@ -100,7 +104,7 @@ $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
 
-**Note:** This packages uses Laravel's [blank](https://laravel.com/docs/8.x/helpers#method-blank) helper to determine blank/empty values. If you have more complicated logic to break out of rules, use a closure or a `\Surgiie\Transformer\Contracts\Transformable` class and call the 2nd argument exit callback:
+**Note:** This packages uses Laravel's [blank](https://laravel.com/docs/9.x/helpers#method-blank) helper to determine blank/empty values. If you have more complicated logic to break out of rules, use a closure or a `\Surgiie\Transformer\Contracts\Transformable` class and call the 2nd argument exit callback:
 
 ### Closures/Transformable Classes
 You can use closures for transforming your value as well:
@@ -187,7 +191,7 @@ $transformer->transform();
 
 ### Wildcards
 
-Wildcards are also supported, for applying functions on keys that match a wildcard pattern:
+You may also use wildcards on keys to apply transformers on keys that match the wildcard pattern:
 
 ```php
 <?php
@@ -211,7 +215,7 @@ $transformer->transform();
 
 In our first example above, we used an example of passing a value that creates a [Carbon](https://carbon.nesbot.com/docs/) instance then calls the `format` method on that instance.
 
-It is possible to delegate a function call to the value if it has been converted to instance. Using a `-><methodName>` convention you can specify method chaining on that instance:
+It is possible to delegate a function call to the value if it has been converted to instance. Using a `-><methodName>:args` convention you can specify method chaining on that instance:
 
 ```php
 
@@ -242,7 +246,7 @@ It is also possible to use class constants that accept a single value as it's co
 <?php
 
 $input = [
-  'some_date'=>"1991-05-01",
+    'some_date'=>"1991-05-01",
 ];
 
 $transformers = [
@@ -250,6 +254,7 @@ $transformers = [
 ];
 
 ```
+
 
 
 ### Guard Layer Over Execution
@@ -372,5 +377,7 @@ Laravel by default will automatically register the package service provider, but
 ## Contribute
 
 Contributions are always welcome in the following manner:
+
+- Discussions
 - Issue Tracker
 - Pull Requests
