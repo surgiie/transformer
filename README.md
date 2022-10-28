@@ -36,7 +36,7 @@ function only_numbers($value)
 $input = [
   'first_name'=>'    jim    ',
   'last_name'=>'   thompson',
-  'address'  => '123 some street'
+  'address'  => '123 some street',
   'phone_number'=>'123-456-7890',
   'date_of_birth'=>"1991-05-01",
 ];
