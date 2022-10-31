@@ -58,6 +58,7 @@ $newData = $transformer->transform();
 //     "first_name" => "Jim",
 //     "last_name" => "Thompson",
 //     "phone_number" => "1234567890",
+//     "address"=> "some street",
 //     "date_of_birth" => "05/01/91",
 // ]
 
