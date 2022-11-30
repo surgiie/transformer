@@ -46,7 +46,7 @@ class Transformer
         //first prepare the arguments for the function call.
         $args = $this->prepareArguments($value, $method, $args);
 
-        // prep the me$method for execution if needed.
+        // prep the method for execution if needed.
         $function = $this->prepareTransformerFunction($method);
 
         // check if the transformer method should be delegated to on an
