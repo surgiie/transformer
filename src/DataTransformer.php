@@ -43,7 +43,7 @@ class DataTransformer
     }
 
     /**
-     * Create a new DataFormatter instance.
+     * Create a new DataTransformer instance.
      */
     public static function create($data, $callables): DataTransformer
     {
