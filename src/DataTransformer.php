@@ -20,7 +20,7 @@ class DataTransformer
     protected array $functions;
 
     /**
-     * Construct a new DataTransfomer instance.
+     * Construct a new DataTransformer instance.
      */
     public function __construct(array $data = [], array $functions = [])
     {
