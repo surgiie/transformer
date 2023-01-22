@@ -1,28 +1,23 @@
-# transformer
+# Transformer
+transformer is a PHP package for transforming values or input, powered by the [Laravel](https://laravel.com) framework's validation components.
 
 ![Tests](https://github.com/surgiie/transformer/actions/workflows/tests.yml/badge.svg)
 
-## Introduction
 
-`transformer` is a php package for transforming values or input. Powered by the [Laravel](https://laravel.com) framework's validation components.
+## Installation
+`composer require surgiie/transformer`
 
-## Install
+## Usage
 
-```bash
-composer require surgiie/transformer
-```
-
-## Use
-
-The most basic use is simple, just pass your data and array of callable functions that your data should be called against:
-
+To use the package, pass your data and an array of callable functions that your data should be passed through:
 
 ```php
 <?php
 
 use Closure;
 use Illuminate\Support\Stringable;
-// example available functions at runtime:
+
+// Example functions available at runtime:
 function to_carbon($value)
 {
     return new Carbon\Carbon($value);
@@ -63,70 +58,70 @@ $newData = $transformer->transform();
 // ]
 
 ```
+Note that the syntax is similar to the Laravel validation syntax because this package is powered by the same components.
 
-Notice that the syntax is very similiar to the [laravel validation](https://laravel.com/docs/9.x/validation) syntax. Again, this is because this package is powered by the same components.
 
-### Passing Arguments/Specifying Value Argument Order
-
-Just like Laravel validation, arguments can be specified to your functions using a `<function>:<comma-delimited-list>` syntax:
+## Passing Arguments
+You can specify arguments for your functions using a <function>:<comma-delimited-list> syntax:
 
 ```php
+<?php
 
 $transformers = [
     'example'=>'your_function:arg1,arg2',
 ];
+
 ```
 
-By default, your function will be passed the value being formatted as the first argument then will pass the arguments in the order you specify them. However, if your function does not
-accept the value as the first argument, you may use the `:value:` placeholder to specify order. For example, `preg_replace` accepts the value to change as the 3rd argument:
+By default, the first argument passed to your function will be the value being formatted, followed by the arguments specified in the order provided. If your function does not accept the value as the first argument, you can use the :value: placeholder to specify the order. For example:
 
 ```php
+<?php
 
 $input = ['phone_number'=>'123-456-3235'];
 $transformers = [
     'example'=>'preg_replace:/[^0-9]/,,:value:',
 ];
-
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
-
 ```
-### Optional Transformation/Blank Input
-Sometimes you may only want to transform a value if the value isnt null or "blank". You can specify a `?` anywhere in the chain of functions to specify if we should break out of processing functions when the input is blank. Often times, this should be defined in front of all your functions:
+## Optional Transformation
+If you only want to transform a value if it is not null or "blank", you can use the ? character in the chain of functions to specify when to break out of processing. This is often placed at the start of the chain:
 
 ```php
-$input = ['first_name'=>null];
 
+<?php
+
+$input = ['first_name'=>null];
 $transformers = [
     'example'=>'?|function_one|function_two',
 ];
-// no functions will be processed because first_name is null.
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
+Note: This package uses Laravel's blank helper to determine blank/empty values. If you have more complex logic for breaking out of rules, you can use a closure or a `\Surgiie\Transformer\Contracts\Transformable` class and call the 2nd argument exit callback.
 
-**Note:** This packages uses Laravel's [blank](https://laravel.com/docs/9.x/helpers#method-blank) helper to determine blank/empty values. If you have more complicated logic to break out of rules, use a closure or a `\Surgiie\Transformer\Contracts\Transformable` class and call the 2nd argument exit callback:
-
-### Closures/Transformable Classes
-You can use closures for transforming your value as well:
+## Closures and Transformable Classes
+You can use closures to transform your values:
 
 ```php
+
+<?php
 
 $input = ['first_name'=>' Bob'];
 $transformers = [
     'first_name'=>['trim', function ($value) {
-        // change the value.
+        // modify the value
         return $value;
     }],
-]
-
+];
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
-
 ```
-Or you can also implement the `Surgiie\Transformer\Contracts\Transformable` contract and use class instances:
+Alternatively, you can implement the Surgiie\Transformer\Contracts\Transformable contract and use class instances:
 
 ```php
+
 <?php
 
 use Surgiie\Transformer\DataTransformer;
@@ -134,15 +129,14 @@ use Surgiie\Transformer\Contracts\Transformable;
 
 class TransformValue implements Transformable
 {
-
     public function transform($value, Closure $exit)
     {
         // quit transforming value(s)
         if($someCondition){
-            $exit(); // equivalent to ? documented above
+            $exit();
         }
 
-        // or change the $value
+        // or modify the value
         $value = "Changed";
 
         return $value;
@@ -155,15 +149,15 @@ $transformers = [
 ];
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
+
 ```
 
-
-
-### Array Input
-
-You may also format nested array data using dot notation:
+## Array Input
+You can also format nested array data using dot notation:
 
 ```php
+
+<?php
 
 $input = [
     'contact_info'=>[
@@ -173,7 +167,6 @@ $input = [
         'address'=>'123 some lane.'
     ]
 ];
-
 $transformers = [
     'contact_info.first_name'=>'trim|ucwords',
     'contact_info.last_name'=>'trim|ucwords',
@@ -182,19 +175,14 @@ $transformers = [
         return 'Address Is: '.$address;
     }],
 ];
-
 $transformer = new DataTransformer($input, $transformers);
-
 $transformer->transform();
-
 ```
-
-
-### Wildcards
-
-You may also use wildcards on keys to apply transformers on keys that match the wildcard pattern:
+## Wildcards
+You can also use wildcards on keys to apply transformers on keys that match the wildcard pattern:
 
 ```php
+
 <?php
 
 $input = [
@@ -203,26 +191,22 @@ $input = [
     'ignored'=>' i-will-be-the-same'
 ];
 $transformers = [
-    //apply to all keys that contain "name"
+    // apply to all keys that contain "name"
     '*name*'=>'trim|ucwords',
 ];
-
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
 
-
-### Object Values/Method Delegation
-
-In our first example above, we used an example of passing a value that creates a [Carbon](https://carbon.nesbot.com/docs/) instance then calls the `format` method on that instance.
-
-It is possible to delegate a function call to the value if it has been converted to instance. Using a `-><methodName>:args` convention you can specify method chaining on that instance:
+## Object Values/Method Delegation
+It is possible to delegate a function call to an object if the value has been converted to an instance. Using the syntax -><methodName>:args, you can specify method chaining on that instance:
 
 ```php
 
 <?php
 
 use Closure;
+use PHPUnit\TextUI\XmlConfiguration\CodeCoverage\Report\Php;
 
 // example available functions at runtime:
 function to_carbon($value)
@@ -233,14 +217,11 @@ function to_carbon($value)
 $input = [
   'some_date'=>"1991-05-01",
 ];
-
 $transformers = [
     'some_date'=>'to_carbon|->addDay:1|->format:m/d/y',
 ];
-
 ```
-
-It is also possible to use class constants that accept a single value as it's constructor, for example, the above example, can also be written as:
+You can also use class constants that accept a single value as its constructor, for example:
 
 ```php
 
@@ -249,20 +230,15 @@ It is also possible to use class constants that accept a single value as it's co
 $input = [
     'some_date'=>"1991-05-01",
 ];
-
 $transformers = [
     'some_date'=>[Carbon\Carbon::class, '->addDay:1', '->format:m/d/y'],
 ];
-
 ```
-
-
-
-### Guard Layer Over Execution
-
-By default, all available functions that are callable at runtime will be executed but if you have concerns about this or want to add a protection/security layer that prevents certain methods from being called, you may easily add a guard callback that checks if a method should be called by returning true:
+## Guard Layer Over Execution
+By default, all available functions that are callable at runtime will be executed. However, if you want to add a protection or security layer that prevents certain methods from being called, you can add a guard callback that checks if a method should be called by returning true:
 
 ```php
+
 <?php
 
 use Surgiie\Transformer\DataTransformer;
@@ -277,41 +253,34 @@ Transformer::guard(function($method, $key){
 $input = [
     'first_name'=>'    jim    ',
 ];
-
 $transformers = [
     'first_name'=>'trim|ucwords',
 ];
-
 
 $transformer = new DataTransformer($input, $transformers);
 
 // throws a Surgiie\Transformer\Exceptions\ExecutionNotAllowedException once it gets to ucwords due to the guard method.
 $transformer->transform();
-
 ```
 
-### Manually Transforming Values/Single Values
+## Manually Transforming Values/Single Values
+To format a simple one-off value, use the Transformer class:
 
-If you have a simple one off value to format, you can use the `Transformer` class manually:
 
 ```php
 <?php
-
 
 use Surgiie\Transformer\Transformer;
 
 $transformer = new Transformer("   uncle bob   ", ['trim', 'ucwords']);
 
 $transformer->transform(); // returns "Uncle Bob"
-
 ```
 
-
-### Use Traits
-
-If you want to transform data and values on the fly quickly in your classes, you can utilize the `\Surgiie\Transformer\Concerns\UsesTransformer` trait:
-
+## Use Traits
+To transform data and values on-the-fly in your classes, use the `\Surgiie\Transformer\Concerns\UsesTransformer` trait:
 ```php
+
 <?php
 
 use App\Http\Controllers\Controller;
@@ -327,23 +296,21 @@ class ExampleController extends Controller
         //...
 
         // transform a single value
-        $newValue = $this->transform(" example  ", ['trim|ucwords'])
+        $newValue = $this->transform(" example  ", ['trim|ucwords']);
         // or transform an array of data
         $newData = $this->transformData(['example'=> 'datat    '], ["example"=>'trim|ucwords']);
-
     }
 }
-
 ```
+### Use the Request Macro
+To transform data using a macro on a Illuminate\Http\Request object instance, call the transform() function on the request, which returns the transformed data.
 
-### Use the Request macro
-
-You can also utilize a macro on a `Illuminate\Http\Request` object instance by calling the `transform()` function on the request itself, returning the resulting transform.
 
 ```php
+
 public function store(Request $request)
 {
-    // Using the data that is in the request object (i.e. `$request->all()`)
+    // Using data from the request object (i.e. `$request->all()`)
     $transformedData = $request->transform([
         'first_name' => ['strtoupper'],
     ]);
@@ -357,13 +324,12 @@ public function store(Request $request)
         'first_name' => ['strtoupper'],
     ]);
 }
+
 ```
+When calling on a FormRequest object, it uses the `validated()` function to retrieve the input data. Note that this requires the data you are targeting to be defined as a validation rule in your form request's rules function, otherwise the data will be omitted from transformation.
 
-If calling on a `FormRequest` object, it will use the `validated()` function to retrieve the input data. **Note** that this does require the data you are targeting to be defined as a validation rule in your form request's `rules` function, otherwise the data will be omitted from transformation.
-
-#### Package Discovery/Dont Discover
-
-Laravel by default will automatically register the package service provider, but if you don't want to include the macro, you can ignore package discovery for the service provider by including the following in your `composer.json`.
+## Package Discovery/Don't Discover
+Laravel automatically registers the package service provider, but if you don't want to include the macro, you can ignore package discovery for the service provider by including the following in your composer.json:
 
 ```json
 "extra": {
@@ -374,6 +340,7 @@ Laravel by default will automatically register the package service provider, but
     }
 }
 ```
+
 
 ## Contribute
 
