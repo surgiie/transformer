@@ -199,7 +199,7 @@ $transformer->transform();
 ```
 
 ## Object Values/Method Delegation
-It is possible to delegate a function call to an object if the value has been converted to an instance. Using the syntax -><methodName>:args, you can specify method chaining on that instance:
+It is possible to delegate a function call to an object if the value has been converted to an instance. Using the syntax `-><methodName>:args`, you can specify method chaining on that instance:
 
 ```php
 
