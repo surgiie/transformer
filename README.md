@@ -73,7 +73,7 @@ $transformers = [
 
 ```
 
-By default, the first argument passed to your function will be the value being formatted, followed by the arguments specified in the order provided. If your function does not accept the value as the first argument, you can use the :value: placeholder to specify the order. For example:
+By default, the first argument passed to your function will be the value being formatted, followed by the arguments specified in the order provided. If your function does not accept the value as the first argument, you can use the `:value:` placeholder to specify the order. For example:
 
 ```php
 <?php
