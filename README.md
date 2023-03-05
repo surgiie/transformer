@@ -40,7 +40,7 @@ $transformers = [
     'first_name'=>'trim|ucfirst',
     'last_name'=>'trim|ucfirst',
     'phone_number'=>'only_numbers',
-    // more on "object values and method delegation below:"
+    // more on object values and method delegation below
     'address' => [Stringable::class, '->after:123 ', '->toString'],
     'date_of_birth'=>'to_carbon|->format:m/d/y',
 ];
@@ -62,7 +62,7 @@ Note that the syntax is similar to the Laravel validation syntax because this pa
 
 
 ## Passing Arguments
-You can specify arguments for your functions using a <function>:<comma-delimited-list> syntax:
+You can specify arguments for your functions using a `<function>:<comma-delimited-list>` syntax:
 
 ```php
 <?php
@@ -86,7 +86,7 @@ $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
 ## Optional Transformation
-If you only want to transform a value if it is not null or "blank", you can use the ? character in the chain of functions to specify when to break out of processing. This is often placed at the start of the chain:
+If you only want to transform a value if it is not null or "blank", you can use the `?` character in the chain of functions to specify when to break out of processing. This is often placed at the start of the chain:
 
 ```php
 
@@ -99,7 +99,7 @@ $transformers = [
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
-Note: This package uses Laravel's blank helper to determine blank/empty values. If you have more complex logic for breaking out of rules, you can use a closure or a `\Surgiie\Transformer\Contracts\Transformable` class and call the 2nd argument exit callback.
+Note: This package uses Laravel's `blank` helper to determine blank/empty values. If you have more complex logic for breaking out of rules, you can use a closure or a `\Surgiie\Transformer\Contracts\Transformable` class and call the 2nd argument exit callback.
 
 ## Closures and Transformable Classes
 You can use closures to transform your values:
@@ -118,7 +118,7 @@ $transformers = [
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
-Alternatively, you can implement the Surgiie\Transformer\Contracts\Transformable contract and use class instances:
+Alternatively, you can implement the `Surgiie\Transformer\Contracts\Transformable` contract and use class instances:
 
 ```php
 
@@ -206,7 +206,6 @@ It is possible to delegate a function call to an object if the value has been co
 <?php
 
 use Closure;
-use PHPUnit\TextUI\XmlConfiguration\CodeCoverage\Report\Php;
 
 // example available functions at runtime:
 function to_carbon($value)
@@ -264,7 +263,7 @@ $transformer->transform();
 ```
 
 ## Manually Transforming Values/Single Values
-To format a simple one-off value, use the Transformer class:
+To format a one-off value, use the Transformer class:
 
 
 ```php
@@ -298,12 +297,12 @@ class ExampleController extends Controller
         // transform a single value
         $newValue = $this->transform(" example  ", ['trim|ucwords']);
         // or transform an array of data
-        $newData = $this->transformData(['example'=> 'datat    '], ["example"=>'trim|ucwords']);
+        $newData = $this->transformData(['example'=> 'data    '], ["example"=>'trim|ucwords']);
     }
 }
 ```
 ### Use the Request Macro
-To transform data using a macro on a Illuminate\Http\Request object instance, call the transform() function on the request, which returns the transformed data.
+To transform data using a macro on a `Illuminate\Http\Request` object instance, call the `transform()` method on the request, which returns the transformed data.
 
 
 ```php
@@ -326,10 +325,10 @@ public function store(Request $request)
 }
 
 ```
-When calling on a FormRequest object, it uses the `validated()` function to retrieve the input data. Note that this requires the data you are targeting to be defined as a validation rule in your form request's rules function, otherwise the data will be omitted from transformation.
+When calling on a `FormRequest` object, it uses the `validated()` function to retrieve the input data. Note that this requires the data you are targeting to be defined as a validation rule in your form request's rules function, otherwise the data will be omitted from transformation.
 
 ## Package Discovery/Don't Discover
-Laravel automatically registers the package service provider, but if you don't want to include the macro, you can ignore package discovery for the service provider by including the following in your composer.json:
+Laravel automatically registers the package service provider, but if you don't want to include the macro, you can ignore package discovery for the service provider by including the following in your `composer.json`:
 
 ```json
 "extra": {
