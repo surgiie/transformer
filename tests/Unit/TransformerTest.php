@@ -7,22 +7,6 @@ use Surgiie\Transformer\Transformer;
 
 beforeEach(function () {
     Transformer::unguard();
-    $this->data = [
-        'first_name' => '    jim    ',
-        'last_name' => '   thompson',
-        'date_of_birth' => '2020-05-24',
-        'password' => 'abcdefgh12345',
-        'favorite_number' => '24',
-        'favorite_date' => null,
-        'get_notifications' => true,
-        'contact_info' => [
-            'address_one' => '123 some lane street',
-            'home_phone' => '1234567890',
-            'cell_phone' => '1234567890',
-            'apartment_number' => '12',
-            'email' => 'email@example.com',
-        ],
-    ];
 });
 
 it('calls functions on values', function () {

@@ -18,7 +18,7 @@ class TransformerRuleParser extends ValidationRuleParser
     }
 
     /**
-     * Parse a string based transformer.
+     * Parse a string based transformers.
      */
     protected static function parseStringRule($transformers)
     {

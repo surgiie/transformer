@@ -7,13 +7,13 @@ use Surgiie\Transformer\Transformer;
 
 trait UsesTransformer
 {
-    /**Return a new transformer instance.*/
+    /**Return a new Transformer instance.*/
     public function transformer($value = '', array $transformers = [], string|null $name = null): Transformer
     {
         return new Transformer($value, $transformers, $name);
     }
 
-    /**Return a new transformer instance.*/
+    /**Return a new DataTransformer instance.*/
     public function dataTransformer(array $data = [], array $functions = []): DataTransformer
     {
         return new DataTransformer($data, $functions);
@@ -25,7 +25,7 @@ trait UsesTransformer
         return $this->transformer($value, $functions, $name)->transform();
     }
 
-    /**Transform the given data.*/
+    /**Transform the given array data.*/
     public function transformData(array $data = [], array $functions = []): array
     {
         return $this->dataTransformer($data, $functions)->transform();

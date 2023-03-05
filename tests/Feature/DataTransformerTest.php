@@ -103,7 +103,7 @@ it('can process tranformable objects', function () {
     expect($formattedData['get_notifications'])->not->toBe($this->data['get_notifications']);
 });
 
-it('can exits on blank input using ?', function () {
+it('can exit on blank input using ?', function () {
     $formatter = (new DataTransformer($this->data, [
         'favorite_date' => '?|Carbon\Carbon|.format:m/d/Y',
     ]));
@@ -113,7 +113,7 @@ it('can exits on blank input using ?', function () {
     expect($formattedData['favorite_date'])->toBe($this->data['favorite_date']);
     expect($formattedData['favorite_date'])->not->toBe((new Carbon())->format('m/d/Y'));
 
-    //assert at any position in the list of functions
+    //assert ? break works at random position in chain.
     $this->data['favorite_date'] = '2022-05-24';
     $formatter = (new DataTransformer($this->data, [
         'favorite_date' => ['Carbon\Carbon', function () {

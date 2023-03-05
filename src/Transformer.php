@@ -43,7 +43,7 @@ class Transformer
      */
     protected function call($method, $value, array $args = [])
     {
-        //first prepare the arguments for the function call.
+        //first prepare the arguments for the method call.
         $args = $this->prepareArguments($value, $method, $args);
 
         // prep the method for execution if needed.
@@ -90,7 +90,7 @@ class Transformer
     }
 
     /*
-     * Check if the given transformer is allowed/not guarded.
+     * Check if the given transformer is allowed and not guarded.
      */
     protected function shouldExecute($method): bool
     {
@@ -112,7 +112,7 @@ class Transformer
     }
 
     /**
-     * Unregister the callback that guards execution of transformers.
+     * Unregister the callback that determines execution of transformers.
      */
     public static function unguard(): void
     {
@@ -130,7 +130,7 @@ class Transformer
     }
 
     /**
-     * Check if the transformer method should be delegated to the und
+     * Check if the transformer method should be delegated to the underlying object.
      */
     protected function shouldDelegateTransformer($value, $method): bool
     {
@@ -191,7 +191,7 @@ class Transformer
     {
         // delegated function calls do not get the value passed in by default
         // since the set value is the transformer function itself,
-        // the value parameter is is not needed as a param.
+        // the value parameter is not needed as a parameter to this function
         if ($this->shouldDelegateTransformer($value, $function)) {
             $defaults = [];
         } else {
