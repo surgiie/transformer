@@ -5,7 +5,9 @@ transformer is a PHP package for transforming values or input, powered by the [L
 
 
 ## Installation
-`composer require surgiie/transformer`
+```bash
+composer require surgiie/transformer
+````
 
 ## Usage
 
