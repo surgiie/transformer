@@ -45,7 +45,7 @@ it('calls transform on request data and includes everything', function () {
         ['first_name' => 'trim|ucfirst']
     );
 
-    expect(count($transformedData))->toBeGreaterThan(1)
+    expect(count($transformedData))->toBe(count($this->request->all()))
         ->and($transformedData['first_name'])->toBe('Jim');
 });
 
@@ -74,10 +74,10 @@ it('can use inline function and delegate', function () {
         return new \Carbon\Carbon($value);
     }
     $formattedData = $this->request->transform([
-        'date_of_birth' => 'to_carbon|->addDay:1|->format:m/d/y',
+        'date_of_birth' => 'to_carbon|->addDay:1|->format:m/d/Y',
     ]);
 
-    expect($formattedData['date_of_birth'])->not->toBe('05/24/2020');
+    expect($formattedData['date_of_birth'])->toBe('05/25/2020');
 });
 
 it('can use the validated data from form requests', function () {
