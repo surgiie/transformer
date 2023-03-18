@@ -19,7 +19,7 @@
     "require": {
         "php": "^8.0.2",
         "illuminate/http": "^9.0",
-        "illuminate/support": "^9.0",
+        "illuminate/support": "^9.52",
         "illuminate/validation": "^9.0"
     },
     "require-dev": {
