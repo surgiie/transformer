@@ -23,7 +23,7 @@
         "illuminate/validation": "^9.0"
     },
     "require-dev": {
-        "pestphp/pest": "^1.22",
+        "pestphp/pest": "^2.2",
         "laravel/pint": "^1.0",
         "symfony/var-dumper": "^6.2"
     },
