@@ -64,6 +64,7 @@ Note that the syntax is similar to the Laravel validation syntax because this pa
 
 
 ## Passing Arguments
+
 You can specify arguments for your functions using a `<function>:<comma-delimited-list>` syntax:
 
 ```php
@@ -88,6 +89,7 @@ $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
 ## Optional Transformation
+
 If you only want to transform a value if it is not null or "blank", you can use the `?` character in the chain of functions to specify when to break out of processing. This is often placed at the start of the chain:
 
 ```php
@@ -104,6 +106,7 @@ $transformer->transform();
 Note: This package uses Laravel's `blank` helper to determine blank/empty values. If you have more complex logic for breaking out of rules, you can use a closure or a `\Surgiie\Transformer\Contracts\Transformable` class and call the 2nd argument exit callback.
 
 ## Closures and Transformable Classes
+
 You can use closures to transform your values:
 
 ```php
@@ -235,7 +238,9 @@ $transformers = [
     'some_date'=>[Carbon\Carbon::class, '->addDay:1', '->format:m/d/y'],
 ];
 ```
+
 ## Guard Layer Over Execution
+
 By default, all available functions that are callable at runtime will be executed. However, if you want to add a protection or security layer that prevents certain methods from being called, you can add a guard callback that checks if a method should be called by returning true:
 
 ```php
@@ -279,7 +284,9 @@ $transformer->transform(); // returns "Uncle Bob"
 ```
 
 ## Use Traits
+
 To transform data and values on-the-fly in your classes, use the `\Surgiie\Transformer\Concerns\UsesTransformer` trait:
+
 ```php
 
 <?php
@@ -330,7 +337,7 @@ public function store(Request $request)
 When calling on a `FormRequest` object, it uses the `validated()` function to retrieve the input data. Note that this requires the data you are targeting to be defined as a validation rule in your form request's rules function, otherwise the data will be omitted from transformation.
 
 ## Package Discovery/Don't Discover
-Laravel automatically registers the package service provider, but if you don't want to include the macro, you can ignore package discovery for the service provider by including the following in your `composer.json`:
+Laravel automatically registers the package service provider, but if you don't want this, you can ignore package discovery for the service provider by including the following in your `composer.json`:
 
 ```json
 "extra": {
