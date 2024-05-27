@@ -8,7 +8,7 @@ use Surgiie\Transformer\Transformer;
 trait UsesTransformer
 {
     /**Return a new Transformer instance.*/
-    public function transformer($value = '', array $transformers = [], string|null $name = null): Transformer
+    public function transformer($value = '', array $transformers = [], ?string $name = null): Transformer
     {
         return new Transformer($value, $transformers, $name);
     }
@@ -20,7 +20,7 @@ trait UsesTransformer
     }
 
     /**Transform the given value.*/
-    public function transform($value = '', array $functions = [], string|null $name = null)
+    public function transform($value = '', array $functions = [], ?string $name = null)
     {
         return $this->transformer($value, $functions, $name)->transform();
     }

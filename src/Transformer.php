@@ -31,7 +31,7 @@ class Transformer
     /**
      * Construct a new Transformer instance.
      */
-    public function __construct($value = '', array|string $functions = [], string $name = null)
+    public function __construct($value = '', array|string $functions = [], ?string $name = null)
     {
         $this->setValue($value);
         $this->setName($name);
@@ -65,7 +65,7 @@ class Transformer
         //check if its a custom transformable class
         if ($function instanceof Transformable) {
             return $function->transform($value, $this->abortTransformationCallback());
-        // or a callback
+            // or a callback
         } elseif ($function instanceof Closure) {
             return $function($value, $this->abortTransformationCallback());
         }
@@ -82,7 +82,7 @@ class Transformer
     }
 
     /**Set the name of the value/input being transformed.*/
-    protected function setName(null|string $name = null): static
+    protected function setName(?string $name = null): static
     {
         $this->name = $name;
 
@@ -201,7 +201,7 @@ class Transformer
         $parameters = array_merge($defaults, $args);
 
         foreach ($parameters as $index => $param) {
-            if(!is_string($param)){
+            if (! is_string($param)) {
                 continue;
             }
 
@@ -211,10 +211,10 @@ class Transformer
                 break;
             }
             // allow params to be to be casted to a specific type
-            if(preg_match('/.+@(int|str|float|bool|array|object)/', $param, $matches)){
+            if (preg_match('/.+@(int|str|float|bool|array|object)/', $param, $matches)) {
                 $type = $matches[1];
                 $param = rtrim($param, "@$type");
-                $parameters[$index] = match($type){
+                $parameters[$index] = match ($type) {
                     'int' => (int) $param,
                     'str' => (string) $param,
                     'float' => (float) $param,
@@ -224,8 +224,8 @@ class Transformer
                 };
             }
 
-
         }
+
         return $parameters;
     }
 

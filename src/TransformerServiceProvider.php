@@ -9,7 +9,7 @@ class TransformerServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        Request::macro('transform', function (array $input, array $transformers = null): array {
+        Request::macro('transform', function (array $input, ?array $transformers = null): array {
             $localTransformers = $transformers ?? $input;
             $input = is_null($transformers)
                 ? (method_exists($this, 'validated')

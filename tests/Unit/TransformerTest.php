@@ -66,6 +66,7 @@ it('can delegate to underlying value instances', function () {
     class Example
     {
         protected $value;
+
         public function __construct($value)
         {
             $this->value = $value;
@@ -73,9 +74,8 @@ it('can delegate to underlying value instances', function () {
 
         public function concat($string)
         {
-            return $this->value . $string;
+            return $this->value.$string;
         }
-
     }
 
     function example($value)
@@ -92,7 +92,6 @@ it('can delegate to underlying value instances', function () {
     expect($formatter->transform())->toBe('foobar');
 });
 
-
 it('can cast arguments', function () {
 
     function example_two(int $value)
@@ -102,7 +101,7 @@ it('can cast arguments', function () {
 
     $formatter = (new Transformer(1, [
         'trim',
-        'example_two:1@int'
+        'example_two:1@int',
     ]));
 
     expect($formatter->transform())->toBe(2);
