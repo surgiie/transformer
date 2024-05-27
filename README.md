@@ -75,6 +75,7 @@ $transformers = [
 ];
 
 ```
+### Specify Value Argument Order
 
 By default, the first argument passed to your function will be the value being formatted, followed by the arguments specified in the order provided. If your function does not accept the value as the first argument, you can use the `:value:` placeholder to specify the order. For example:
 
@@ -88,6 +89,58 @@ $transformers = [
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
+
+### Casting Arguments
+
+You may find that when passing arguments to the transforming functions, you may hit run time errors due to typehints on arguments for basic types. Since arguments are being specified as a string here, you may come across a scenario like this:
+
+
+```php
+<?php
+
+function example_function(int $value){
+    return $value + 1;
+}
+
+$input = ['example'=>"1"];
+
+$transformers = [
+    'example'=>'example_function:1',
+];
+
+```
+
+The above would throw an error because the `1` argument being passed in is a string and the function expects a integer. In these cases, you can use the following convention to cast the argument to specific native type, by suffixing `@<type>` to the value. For example to cast the `1` to an integer:
+
+
+```php
+<?php
+
+function example_function(int $value){
+    return $value + 1;
+}
+
+$input = ['example'=>"1"];
+
+$transformers = [
+    'example'=>'example_function:1@int', // "1" will  be casted to an int.
+];
+
+```
+
+#### Available Casting Types:
+
+The following basic casting types are available
+
+- int
+- str
+- float
+- bool
+- array
+- object
+
+**Note** For more complex type or casting needs, use a Closure or `Surgiie\Transformer\Contracts\Transformable` class as documented below.
+
 ## Optional Transformation
 
 If you only want to transform a value if it is not null or "blank", you can use the `?` character in the chain of functions to specify when to break out of processing. This is often placed at the start of the chain:
@@ -212,17 +265,34 @@ It is possible to delegate a function call to an object if the value has been co
 
 use Closure;
 
-// example available functions at runtime:
-function to_carbon($value)
+class Example
 {
-    return new Carbon\Carbon($value);
+
+    protected $value;
+
+    public function __construct($value)
+    {
+        $this->value = $value;
+    }
+
+    public function concat($string)
+    {
+        return $this->value . $string;
+    }
+
 }
 
+function example($value)
+{
+    return new Example($value);
+}
+
+
 $input = [
-  'some_date'=>"1991-05-01",
+  'string'=>"Foo",
 ];
 $transformers = [
-    'some_date'=>'to_carbon|->addDay:1|->format:m/d/y',
+    'string'=>'example|->concat:Bar',
 ];
 ```
 You can also use class constants that accept a single value as its constructor, for example:
@@ -232,10 +302,10 @@ You can also use class constants that accept a single value as its constructor, 
 <?php
 
 $input = [
-    'some_date'=>"1991-05-01",
+    'string'=>"Foo",
 ];
 $transformers = [
-    'some_date'=>[Carbon\Carbon::class, '->addDay:1', '->format:m/d/y'],
+    'string'=>[Example::class, '->concat:Bar'],
 ];
 ```
 

@@ -74,7 +74,7 @@ it('can use inline function and delegate', function () {
         return new \Carbon\Carbon($value);
     }
     $formattedData = $this->request->transform([
-        'date_of_birth' => 'to_carbon|->addDay:1|->format:m/d/Y',
+        'date_of_birth' => 'to_carbon|->addDay:1@int|->format:m/d/Y',
     ]);
 
     expect($formattedData['date_of_birth'])->toBe('05/25/2020');

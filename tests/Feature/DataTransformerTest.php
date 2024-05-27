@@ -128,13 +128,13 @@ it('can exit on blank input using ?', function () {
 
 it('can delegate to underlying objects', function () {
     $formatter = (new DataTransformer($this->data, [
-        'date_of_birth' => 'trim|Carbon\Carbon|->addDays:1|->format:m/d/Y',
+        'date_of_birth' => 'trim|Carbon\Carbon|->format:m/d/Y',
     ]));
 
     $formattedData = $formatter->transform();
 
     expect($formattedData['date_of_birth'])->not->toBe($this->data['date_of_birth']);
-    expect($formattedData['date_of_birth'])->toBe('05/25/2020');
+    expect($formattedData['date_of_birth'])->toBe('05/24/2020');
 });
 
 it('can process wildcards on data', function () {

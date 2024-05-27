@@ -201,13 +201,31 @@ class Transformer
         $parameters = array_merge($defaults, $args);
 
         foreach ($parameters as $index => $param) {
-            if (is_string($param) && trim($param) === ':value:') {
+            if(!is_string($param)){
+                continue;
+            }
+
+            if (trim($param) === ':value:') {
                 $parameters[$index] = $value;
                 array_shift($parameters);
                 break;
             }
-        }
+            // allow params to be to be casted to a specific type
+            if(preg_match('/.+@(int|str|float|bool|array|object)/', $param, $matches)){
+                $type = $matches[1];
+                $param = rtrim($param, "@$type");
+                $parameters[$index] = match($type){
+                    'int' => (int) $param,
+                    'str' => (string) $param,
+                    'float' => (float) $param,
+                    'bool' => filter_var($param, FILTER_VALIDATE_BOOL),
+                    'array' => (array) $param,
+                    'object' => (object) $param,
+                };
+            }
 
+
+        }
         return $parameters;
     }
 

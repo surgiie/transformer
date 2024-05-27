@@ -62,14 +62,50 @@ it('can use class constants', function () {
 });
 
 it('can delegate to underlying value instances', function () {
-    $formatter = (new Transformer('   2020-05-24  ', [
+
+    class Example
+    {
+        protected $value;
+        public function __construct($value)
+        {
+            $this->value = $value;
+        }
+
+        public function concat($string)
+        {
+            return $this->value . $string;
+        }
+
+    }
+
+    function example($value)
+    {
+        return new Example($value);
+    }
+
+    $formatter = (new Transformer(' foo ', [
         'trim',
-        Carbon::class,
-        '->addDays:1',
-        '->format:m/d/Y',
+        Example::class,
+        '->concat:bar',
     ]));
 
-    expect($formatter->transform())->toBe('05/25/2020');
+    expect($formatter->transform())->toBe('foobar');
+});
+
+
+it('can cast arguments', function () {
+
+    function example_two(int $value)
+    {
+        return $value + 1;
+    }
+
+    $formatter = (new Transformer(1, [
+        'trim',
+        'example_two:1@int'
+    ]));
+
+    expect($formatter->transform())->toBe(2);
 });
 
 it('throws exception when guarded', function () {
