@@ -87,7 +87,7 @@ it('can process callbacks', function () {
 
 it('can process tranformable objects', function () {
     $formatter = (new DataTransformer($this->data, [
-        'get_notifications' => new class() implements Transformable
+        'get_notifications' => new class implements Transformable
         {
             public function transform($value, Closure $exit)
             {
@@ -111,9 +111,9 @@ it('can exit on blank input using ?', function () {
     $formattedData = $formatter->transform();
 
     expect($formattedData['favorite_date'])->toBe($this->data['favorite_date']);
-    expect($formattedData['favorite_date'])->not->toBe((new Carbon())->format('m/d/Y'));
+    expect($formattedData['favorite_date'])->not->toBe((new Carbon)->format('m/d/Y'));
 
-    //assert ? break works at random position in chain.
+    // assert ? break works at random position in chain.
     $this->data['favorite_date'] = '2022-05-24';
     $formatter = (new DataTransformer($this->data, [
         'favorite_date' => ['Carbon\Carbon', function () {
@@ -149,7 +149,7 @@ it('can process wildcards on data', function () {
 
 it('can process nested arrays with dot notation', function () {
     $formatter = (new DataTransformer($this->data, [
-        'contact_info.address' => [\Illuminate\Support\Stringable::class, '->after:123 ', '->toString'],
+        'contact_info.address' => [Illuminate\Support\Stringable::class, '->after:123 ', '->toString'],
         'contact_info.home_phone' => 'preg_replace:/[^0-9]/,,:value:',
         'contact_info.cell_phone' => 'preg_replace:/[^0-9]/,,:value:',
         'contact_info.apartment_number' => 'str_replace:B,A,:value:',

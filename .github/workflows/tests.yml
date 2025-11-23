@@ -6,13 +6,21 @@ on:
     paths:
       - "src/**"
       - "tests/**"
+      - "composer.json"
+      - "phpstan.neon"
+      - "pint.json"
   pull_request:
     branches: [master]
     paths:
       - "src/**"
       - "tests/**"
+      - "composer.json"
+      - "phpstan.neon"
+      - "pint.json"
+
 jobs:
-  tests:
+  code-quality:
+    name: Code Quality
     if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     steps:
@@ -22,9 +30,11 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          coverage: none
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
+
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v4
@@ -33,8 +43,44 @@ jobs:
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Check code formatting (Pint)
+        run: composer format:test
+
+      - name: Run static analysis (PHPStan)
+        run: composer phpstan
+
+  tests:
+    name: Tests (PHP ${{ matrix.php-version }})
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php-version }}-
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
       - name: Run test suite
-        run: composer run-script test
+        run: composer test

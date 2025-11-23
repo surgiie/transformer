@@ -4,6 +4,4 @@ namespace Surgiie\Transformer\Exceptions;
 
 use Exception;
 
-class AbortedTransformationException extends Exception
-{
-}
+class AbortedTransformationException extends Exception {}

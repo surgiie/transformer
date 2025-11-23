@@ -47,6 +47,9 @@ class TransformerRuleParser extends ValidationRuleParser
 
     /**
      * Extract the transformer name and parameters from a transformer.
+     *
+     * @param  array|string|Transformable|Closure  $transformers
+     * @return array
      */
     public static function parse($transformers)
     {

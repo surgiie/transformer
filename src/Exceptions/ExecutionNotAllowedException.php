@@ -4,6 +4,4 @@ namespace Surgiie\Transformer\Exceptions;
 
 use Exception;
 
-class ExecutionNotAllowedException extends Exception
-{
-}
+class ExecutionNotAllowedException extends Exception {}
