@@ -25,6 +25,7 @@
     "require-dev": {
         "pestphp/pest": "^2.34",
         "laravel/pint": "^1.16",
+        "phpstan/phpstan": "^2.0",
         "symfony/var-dumper": "^7.0"
     },
     "autoload": {
@@ -38,7 +39,16 @@
         }
     },
     "scripts": {
-        "test": "./vendor/bin/pest tests -c phpunit.dist.xml"
+        "test": "./vendor/bin/pest tests -c phpunit.dist.xml",
+        "test:coverage": "./vendor/bin/pest tests -c phpunit.dist.xml --coverage",
+        "phpstan": "./vendor/bin/phpstan analyse --memory-limit=2G",
+        "format": "./vendor/bin/pint",
+        "format:test": "./vendor/bin/pint --test",
+        "quality": [
+            "@format:test",
+            "@phpstan",
+            "@test"
+        ]
     },
     "config": {
         "allow-plugins": {

@@ -62,7 +62,6 @@ it('can use class constants', function () {
 });
 
 it('can delegate to underlying value instances', function () {
-
     class Example
     {
         protected $value;
@@ -74,7 +73,7 @@ it('can delegate to underlying value instances', function () {
 
         public function concat($string)
         {
-            return $this->value.$string;
+            return $this->value . $string;
         }
     }
 
@@ -93,7 +92,6 @@ it('can delegate to underlying value instances', function () {
 });
 
 it('can cast arguments', function () {
-
     function example_two(int $value)
     {
         return $value + 1;

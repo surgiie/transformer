@@ -43,7 +43,7 @@ class Transformer
      */
     protected function call($method, $value, array $args = [])
     {
-        //first prepare the arguments for the method call.
+        // first prepare the arguments for the method call.
         $args = $this->prepareArguments($value, $method, $args);
 
         // prep the method for execution if needed.
@@ -62,20 +62,22 @@ class Transformer
         if (is_string($function) && class_exists($function)) {
             return new $function($value);
         }
-        //check if its a custom transformable class
+        // check if its a custom transformable class
         if ($function instanceof Transformable) {
             return $function->transform($value, $this->abortTransformationCallback());
             // or a callback
         } elseif ($function instanceof Closure) {
             return $function($value, $this->abortTransformationCallback());
         }
-        //otherwise check if the method is function is even callable/not guarded
+        // otherwise check if the method is function is even callable/not guarded
         elseif (! is_callable($function)) {
+            $functionName = is_string($function) ? $function : get_debug_type($function);
             throw new NotCallableException(
-                "Function $function not callable.",
+                "Function $functionName not callable.",
             );
         } elseif (! $this->shouldExecute($function)) {
-            throw new ExecutionNotAllowedException("Function $function is not allowed to be called.");
+            $functionName = is_string($function) ? $function : get_debug_type($function);
+            throw new ExecutionNotAllowedException("Function $functionName is not allowed to be called.");
         }
 
         return $function(...$args);
@@ -98,7 +100,7 @@ class Transformer
             return true;
         }
 
-        $guard = Transformer::getGuardWith();
+        $guard = self::getGuardWith();
 
         return filter_var($guard($method, $this->value, $this->name), FILTER_VALIDATE_BOOL);
     }
@@ -148,7 +150,7 @@ class Transformer
     protected function abortTransformationCallback(): Closure
     {
         return function () {
-            throw new AbortedTransformationException();
+            throw new AbortedTransformationException;
         };
     }
 
@@ -178,7 +180,7 @@ class Transformer
     protected function prepareTransformerFunction($tranformer)
     {
         if (is_string($tranformer) && is_subclass_of($tranformer, Transformable::class)) {
-            $tranformer = new $tranformer();
+            $tranformer = new $tranformer;
         }
 
         return $tranformer;
@@ -223,7 +225,6 @@ class Transformer
                     'object' => (object) $param,
                 };
             }
-
         }
 
         return $parameters;

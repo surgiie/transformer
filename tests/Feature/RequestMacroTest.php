@@ -6,7 +6,7 @@ beforeEach(function () {
     Transformer::unguard();
     // This is kind of a dirty way to add the macro
     // without including orchestra/testbench
-    (new \Surgiie\Transformer\TransformerServiceProvider(''))
+    (new Surgiie\Transformer\TransformerServiceProvider(''))
         ->boot();
 
     $this->data = [
@@ -26,7 +26,7 @@ beforeEach(function () {
         ],
     ];
 
-    $this->request = (new \Illuminate\Http\Request())
+    $this->request = (new Illuminate\Http\Request)
         ->merge($this->data);
 });
 
@@ -71,7 +71,7 @@ it('can process callbacks', function () {
 it('can use inline function and delegate', function () {
     function to_carbon($value)
     {
-        return new \Carbon\Carbon($value);
+        return new Carbon\Carbon($value);
     }
     $formattedData = $this->request->transform([
         'date_of_birth' => 'to_carbon|->addDay:1@int|->format:m/d/Y',
@@ -81,7 +81,7 @@ it('can use inline function and delegate', function () {
 });
 
 it('can use the validated data from form requests', function () {
-    $this->request = (new \Surgiie\Transformer\Tests\SampleFormRequest())
+    $this->request = (new Surgiie\Transformer\Tests\SampleFormRequest)
         ->merge($this->data);
 
     $transformedData = $this->request->transform(['first_name' => 'trim|ucfirst']);
@@ -92,7 +92,7 @@ it('can use the validated data from form requests', function () {
 
 it('can process nested arrays with dot notation', function () {
     $transformedData = $this->request->transform([
-        'contact_info.address' => [\Illuminate\Support\Stringable::class, '->after:123 ', '->toString'],
+        'contact_info.address' => [Illuminate\Support\Stringable::class, '->after:123 ', '->toString'],
         'contact_info.home_phone' => 'preg_replace:/[^0-9]/,,:value:',
         'contact_info.cell_phone' => 'preg_replace:/[^0-9]/,,:value:',
         'contact_info.apartment' => 'str_replace:B,A,:value:',

@@ -5,6 +5,9 @@ namespace Surgiie\Transformer;
 use Illuminate\Support\Arr;
 use Surgiie\Transformer\Concerns\UsesTransformer;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class DataTransformer
 {
     use UsesTransformer;
@@ -45,7 +48,7 @@ class DataTransformer
     /**
      * Create a new DataTransformer instance.
      */
-    public static function create($data, $callables): DataTransformer
+    public static function create($data, $callables): static
     {
         return new static($data, $callables);
     }
