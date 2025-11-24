@@ -7,10 +7,19 @@ use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationRuleParser;
 use Surgiie\Transformer\Contracts\Transformable;
 
+/**
+ * Parse transformation rules for the transformer.
+ *
+ * This parser extends Laravel's ValidationRuleParser to handle transformation
+ * rule syntax, supporting both string-based and array-based rule definitions.
+ */
 class TransformerRuleParser extends ValidationRuleParser
 {
     /**
      * Parse an array based transformer.
+     *
+     * @param  array<int, mixed>  $transformer  The transformer rule array
+     * @return array<int, mixed>
      */
     protected static function parseArrayRule(array $transformer)
     {
@@ -19,6 +28,9 @@ class TransformerRuleParser extends ValidationRuleParser
 
     /**
      * Parse a string based transformers.
+     *
+     * @param  string  $transformers  The transformer rule string
+     * @return array<int, mixed>
      */
     protected static function parseStringRule($transformers)
     {
@@ -35,6 +47,10 @@ class TransformerRuleParser extends ValidationRuleParser
 
     /**
      * Prepare the given transformer for parsing.
+     *
+     * @param  mixed  $transformer  The transformer to prepare
+     * @param  string  $attribute  The attribute name
+     * @return mixed
      */
     protected function prepareRule($transformer, $attribute)
     {
