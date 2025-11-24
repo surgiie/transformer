@@ -8,10 +8,19 @@ use Surgiie\Transformer\Exceptions\AbortedTransformationException;
 use Surgiie\Transformer\Exceptions\ExecutionNotAllowedException;
 use Surgiie\Transformer\Exceptions\NotCallableException;
 
+/**
+ * Transform a single value through a chain of callable functions.
+ *
+ * This class allows for flexible data transformation by applying a series of
+ * callable functions to a value. Supports various formats including function
+ * names, closures, Transformable classes, and method delegation.
+ */
 class Transformer
 {
     /**
      * The value being transformed.
+     *
+     * @var mixed
      */
     protected $value;
 
@@ -22,14 +31,22 @@ class Transformer
 
     /**
      * The callable transformer functions.
+     *
+     * @var array<int, mixed>
      */
     protected array $functions;
 
-    /**The callback that determines if a transformer is allowed.*/
+    /**
+     * The callback that determines if a transformer is allowed.
+     */
     protected static ?Closure $guardWith = null;
 
     /**
      * Construct a new Transformer instance.
+     *
+     * @param  mixed  $value  The value to transform
+     * @param  array<int, mixed>|string  $functions  The transformation functions to apply
+     * @param  string|null  $name  Optional name for the value being transformed
      */
     public function __construct($value = '', array|string $functions = [], ?string $name = null)
     {
@@ -40,6 +57,14 @@ class Transformer
 
     /**
      * Call transformer function using the given value and parameters.
+     *
+     * @param  mixed  $method  The transformer method or callable to execute
+     * @param  mixed  $value  The value to transform
+     * @param  array<int, mixed>  $args  Additional arguments to pass to the transformer
+     * @return mixed The transformed value
+     *
+     * @throws NotCallableException
+     * @throws ExecutionNotAllowedException
      */
     protected function call($method, $value, array $args = [])
     {
@@ -83,7 +108,12 @@ class Transformer
         return $function(...$args);
     }
 
-    /**Set the name of the value/input being transformed.*/
+    /**
+     * Set the name of the value/input being transformed.
+     *
+     * @param  string|null  $name  The name to set
+     * @return $this
+     */
     protected function setName(?string $name = null): static
     {
         $this->name = $name;
@@ -91,8 +121,10 @@ class Transformer
         return $this;
     }
 
-    /*
+    /**
      * Check if the given transformer is allowed and not guarded.
+     *
+     * @param  mixed  $method  The transformer method to check
      */
     protected function shouldExecute($method): bool
     {
@@ -107,6 +139,8 @@ class Transformer
 
     /**
      * Register the callback that determines execution of transformers.
+     *
+     * @param  Closure  $callback  The guard callback function
      */
     public static function guard(Closure $callback): void
     {
@@ -121,7 +155,9 @@ class Transformer
         static::$guardWith = null;
     }
 
-    /**Get the guard callback.*/
+    /**
+     * Get the guard callback.
+     */
     public static function getGuardWith(): Closure
     {
         if (is_null(static::$guardWith)) {
@@ -133,6 +169,9 @@ class Transformer
 
     /**
      * Check if the transformer method should be delegated to the underlying object.
+     *
+     * @param  mixed  $value  The value to check
+     * @param  mixed  $method  The method to check
      */
     protected function shouldDelegateTransformer($value, $method): bool
     {
@@ -145,7 +184,7 @@ class Transformer
 
     /**
      * Return a callback for passing closures/transformable classes
-     * that throws an exception for aborting processing of tranformers.
+     * that throws an exception for aborting processing of transformers.
      */
     protected function abortTransformationCallback(): Closure
     {
@@ -154,7 +193,12 @@ class Transformer
         };
     }
 
-    /**Set the value to transform.*/
+    /**
+     * Set the value to transform.
+     *
+     * @param  mixed  $value  The value to set
+     * @return $this
+     */
     public function setValue(mixed $value): static
     {
         $this->value = $value;
@@ -162,7 +206,12 @@ class Transformer
         return $this;
     }
 
-    /**Set the transformers to apply on the data.*/
+    /**
+     * Set the transformers to apply on the data.
+     *
+     * @param  array<int, mixed>|string  $functions  The transformation functions
+     * @return $this
+     */
     public function setFunctions(array|string $functions): static
     {
         if (is_string($functions)) {
@@ -176,18 +225,26 @@ class Transformer
 
     /**
      * Prepare the transformer function for execution.
+     *
+     * @param  mixed  $transformer  The transformer to prepare
+     * @return mixed
      */
-    protected function prepareTransformerFunction($tranformer)
+    protected function prepareTransformerFunction($transformer)
     {
-        if (is_string($tranformer) && is_subclass_of($tranformer, Transformable::class)) {
-            $tranformer = new $tranformer;
+        if (is_string($transformer) && is_subclass_of($transformer, Transformable::class)) {
+            $transformer = new $transformer;
         }
 
-        return $tranformer;
+        return $transformer;
     }
 
     /**
      * Prepare arguments for a function call on the value.
+     *
+     * @param  mixed  $value  The value being transformed
+     * @param  mixed  $function  The function being called
+     * @param  array<int, mixed>  $args  Additional arguments
+     * @return array<int, mixed>
      */
     protected function prepareArguments($value, $function, array $args = [])
     {
@@ -232,6 +289,8 @@ class Transformer
 
     /**
      * Apply the set transformer function on the value.
+     *
+     * @return mixed The transformed value
      */
     public function transform()
     {
@@ -249,7 +308,7 @@ class Transformer
 
             try {
                 $this->value = $this->call($rule, $this->value, $parameters);
-            } catch (AbortedTransformationException) {
+            } catch (AbortedTransformationException) { // @phpstan-ignore catch.neverThrown
                 break;
             }
         }
