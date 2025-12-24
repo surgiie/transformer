@@ -1,13 +1,14 @@
 # Transformer
-transformer is a PHP package for transforming values or input, powered by the [Laravel](https://laravel.com) framework's validation components.
+
+A PHP package for transforming data and values with a simple, expressive syntax. Powered by [Laravel](https://laravel.com) framework components.
 
 ![Tests](https://github.com/surgiie/transformer/actions/workflows/tests.yml/badge.svg)
 
-
 ## Installation
+
 ```bash
 composer require surgiie/transformer
-````
+```
 
 ## Usage
 
@@ -60,12 +61,12 @@ $newData = $transformer->transform();
 // ]
 
 ```
-Note that the syntax is similar to the Laravel validation syntax because this package is powered by the same components.
+The syntax is similar to Laravel's validation syntax, as this package is powered by the same framework components.
 
 
 ## Passing Arguments
 
-You can specify arguments for your functions using a `<function>:<comma-delimited-list>` syntax:
+Pass arguments to your transformer functions using the `<function>:<comma-delimited-list>` syntax:
 
 ```php
 <?php
@@ -75,9 +76,9 @@ $transformers = [
 ];
 
 ```
-### Specify Value Argument Order
+### Specifying Value Argument Position
 
-By default, the first argument passed to your function will be the value being formatted, followed by the arguments specified in the order provided. If your function does not accept the value as the first argument, you can use the `:value:` placeholder to specify the order. For example:
+By default, the value being transformed is passed as the first argument to your function, followed by any additional arguments. If your function expects the value in a different position, use the `:value:` placeholder:
 
 ```php
 <?php
@@ -92,58 +93,43 @@ $transformer->transform();
 
 ### Casting Arguments
 
-You may find that when passing arguments to the transforming functions, you may hit run time errors due to typehints on arguments for basic types. Since arguments are being specified as a string here, you may come across a scenario like this:
+When passing arguments to transformer functions, you may encounter runtime errors due to type hints. Since arguments are specified as strings, you can cast them to specific types using the `@<type>` suffix:
 
 
 ```php
 <?php
 
-function example_function(int $value){
+function example_function(int $value) {
     return $value + 1;
 }
 
-$input = ['example'=>"1"];
+$input = ['example' => '1'];
 
+// This will throw an error because '1' is a string, not an integer
 $transformers = [
-    'example'=>'example_function:1',
+    'example' => 'example_function:1',
 ];
 
-```
-
-The above would throw an error because the `1` argument being passed in is a string and the function expects a integer. In these cases, you can use the following convention to cast the argument to specific native type, by suffixing `@<type>` to the value. For example to cast the `1` to an integer:
-
-
-```php
-<?php
-
-function example_function(int $value){
-    return $value + 1;
-}
-
-$input = ['example'=>"1"];
-
+// Fix by casting the argument to an integer
 $transformers = [
-    'example'=>'example_function:1@int', // "1" will  be casted to an int.
+    'example' => 'example_function:1@int',
 ];
-
 ```
 
-#### Available Casting Types:
+#### Available Casting Types
 
-The following basic casting types are available
+- `int` - Integer
+- `str` - String
+- `float` - Float
+- `bool` - Boolean
+- `array` - Array
+- `object` - Object
 
-- int
-- str
-- float
-- bool
-- array
-- object
-
-**Note** For more complex type or casting needs, use a Closure or `Surgiie\Transformer\Contracts\Transformable` class as documented below.
+**Note:** For complex type casting needs, use a Closure or `Surgiie\Transformer\Contracts\Transformable` class (see below).
 
 ## Optional Transformation
 
-If you only want to transform a value if it is not null or "blank", you can use the `?` character in the chain of functions to specify when to break out of processing. This is often placed at the start of the chain:
+To transform a value only when it's not null or blank, use the `?` character in your transformation chain. This is typically placed at the start:
 
 ```php
 
@@ -156,11 +142,12 @@ $transformers = [
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
-Note: This package uses Laravel's `blank` helper to determine blank/empty values. If you have more complex logic for breaking out of rules, you can use a closure or a `\Surgiie\Transformer\Contracts\Transformable` class and call the 2nd argument exit callback.
+
+**Note:** This uses Laravel's `blank()` helper to determine empty values. For complex conditional logic, use a Closure or `\Surgiie\Transformer\Contracts\Transformable` class with the exit callback.
 
 ## Closures and Transformable Classes
 
-You can use closures to transform your values:
+Use closures for custom transformation logic:
 
 ```php
 
@@ -176,7 +163,8 @@ $transformers = [
 $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
-Alternatively, you can implement the `Surgiie\Transformer\Contracts\Transformable` contract and use class instances:
+
+Alternatively, implement the `Surgiie\Transformer\Contracts\Transformable` contract for reusable transformation classes:
 
 ```php
 
@@ -210,8 +198,9 @@ $transformer->transform();
 
 ```
 
-## Array Input
-You can also format nested array data using dot notation:
+## Nested Array Data
+
+Transform nested array data using dot notation:
 
 ```php
 
@@ -237,7 +226,8 @@ $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
 ## Wildcards
-You can also use wildcards on keys to apply transformers on keys that match the wildcard pattern:
+
+Apply transformers to multiple keys using wildcard patterns:
 
 ```php
 
@@ -256,8 +246,9 @@ $transformer = new DataTransformer($input, $transformers);
 $transformer->transform();
 ```
 
-## Object Values/Method Delegation
-It is possible to delegate a function call to an object if the value has been converted to an instance. Using the syntax `-><methodName>:args`, you can specify method chaining on that instance:
+## Object Method Delegation
+
+When a value is transformed into an object instance, you can chain method calls using the `-><methodName>:args` syntax:
 
 ```php
 
@@ -295,7 +286,8 @@ $transformers = [
     'string'=>'example|->concat:Bar',
 ];
 ```
-You can also use class constants that accept a single value as its constructor, for example:
+
+You can also instantiate classes directly using class constants (the value will be passed to the constructor):
 
 ```php
 
@@ -309,9 +301,9 @@ $transformers = [
 ];
 ```
 
-## Guard Layer Over Execution
+## Guard Layer
 
-By default, all available functions that are callable at runtime will be executed. However, if you want to add a protection or security layer that prevents certain methods from being called, you can add a guard callback that checks if a method should be called by returning true:
+Add a security layer to control which functions can be executed during transformation. Register a guard callback that returns `true` to allow a function to execute:
 
 ```php
 
@@ -320,9 +312,9 @@ By default, all available functions that are callable at runtime will be execute
 use Surgiie\Transformer\DataTransformer;
 use Surgiie\Transformer\Transformer;
 
-// accepts the function name being executed and the key/name of the input being processed:
-Transformer::guard(function($method, $key){
-    // only "trim" is allowed to be executed
+// The guard receives the function name and the input key being processed
+Transformer::guard(function($method, $key) {
+    // Only allow 'trim' to be executed
     return in_array($method, ['trim']);
 });
 
@@ -335,12 +327,13 @@ $transformers = [
 
 $transformer = new DataTransformer($input, $transformers);
 
-// throws a Surgiie\Transformer\Exceptions\ExecutionNotAllowedException once it gets to ucwords due to the guard method.
+// Throws ExecutionNotAllowedException when attempting to execute 'ucwords'
 $transformer->transform();
 ```
 
-## Manually Transforming Values/Single Values
-To format a one-off value, use the Transformer class:
+## Transforming Single Values
+
+Transform individual values using the `Transformer` class:
 
 
 ```php
@@ -353,9 +346,9 @@ $transformer = new Transformer("   uncle bob   ", ['trim', 'ucwords']);
 $transformer->transform(); // returns "Uncle Bob"
 ```
 
-## Use Traits
+## Using the Transformer Trait
 
-To transform data and values on-the-fly in your classes, use the `\Surgiie\Transformer\Concerns\UsesTransformer` trait:
+Transform data on-the-fly in your classes by using the `\Surgiie\Transformer\Concerns\UsesTransformer` trait:
 
 ```php
 
@@ -367,7 +360,7 @@ use Surgiie\Transformer\Concerns\UsesTransformer;
 
 class ExampleController extends Controller
 {
-    use UsesTransfomer;
+    use UsesTransformer;
 
     public function store(Request $request)
     {
@@ -380,8 +373,9 @@ class ExampleController extends Controller
     }
 }
 ```
-### Use the Request Macro
-To transform data using a macro on a `Illuminate\Http\Request` object instance, call the `transform()` method on the request, which returns the transformed data.
+### Using the Request Macro
+
+Transform request data using the `transform()` macro available on `Illuminate\Http\Request` instances:
 
 
 ```php
@@ -406,8 +400,9 @@ public function store(Request $request)
 ```
 When calling on a `FormRequest` object, it uses the `validated()` function to retrieve the input data. Note that this requires the data you are targeting to be defined as a validation rule in your form request's rules function, otherwise the data will be omitted from transformation.
 
-## Package Discovery/Don't Discover
-Laravel automatically registers the package service provider, but if you don't want this, you can ignore package discovery for the service provider by including the following in your `composer.json`:
+## Disabling Auto-Discovery
+
+Laravel automatically registers the package service provider. If you want to disable auto-discovery, add the following to your `composer.json`:
 
 ```json
 "extra": {
@@ -420,10 +415,10 @@ Laravel automatically registers the package service provider, but if you don't w
 ```
 
 
-## Contribute
+## Contributing
 
-Contributions are always welcome in the following manner:
+Contributions are welcome! You can contribute through:
 
-- Discussions
-- Issue Tracker
-- Pull Requests
+- **Discussions** - Share ideas and ask questions
+- **Issues** - Report bugs or request features
+- **Pull Requests** - Submit code improvements
