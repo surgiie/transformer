@@ -18,12 +18,12 @@
     ],
     "require": {
         "php": "^8.2.0",
-        "illuminate/http": "^11.0|^12.0",
-        "illuminate/support": "^11.0|^12.0",
-        "illuminate/validation": "^11.0|^12.0"
+        "illuminate/http": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "illuminate/validation": "^11.0|^12.0|^13.0"
     },
     "require-dev": {
-        "pestphp/pest": "^2.34",
+        "pestphp/pest": "^2.34|^4.4",
         "laravel/pint": "^1.16",
         "phpstan/phpstan": "^2.0",
         "symfony/var-dumper": "^7.0"
